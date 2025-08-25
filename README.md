@@ -1,5 +1,7 @@
 # 北辰书塾 PolarisShu
 
+![PolarisShuBanner](https://github.com/user-attachments/assets/55c7b0b7-1fa1-425d-87af-ee7d806b0624)
+
 一个优雅的个人图书馆管理系统，让您的藏书井然有序，阅读体验更加美好。
 
 ## 快速开始
