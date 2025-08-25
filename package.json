@@ -1,0 +1,19 @@
+{
+  "name": "fullstack-monorepo",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run scripts/dev.ts",
+    "build": "bun run scripts/build.ts",
+    "dev:frontend": "cd frontend && bun dev",
+    "dev:backend": "cd backend && cargo watch -x run",
+    "build:frontend": "cd frontend && bun run build",
+    "build:backend": "cd backend && cargo build --release",
+    "generate:types": "cd frontend && bun run generate:types"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "concurrently": "latest"
+  }
+}
