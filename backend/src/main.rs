@@ -82,8 +82,13 @@ async fn health_check() -> Json<HealthResponse> {
 
 /// Create and configure CORS handler
 fn create_cors_handler() -> CorsHandler {
+    let allowed_origin = std::env::var("CORS_ALLOWED_ORIGIN")
+        .unwrap_or_else(|_| "http://localhost:5173".to_string());
+    
+    info!("CORS configured for origin: {}", allowed_origin);
+    
     Cors::new()
-        .allow_origin("http://localhost:5173") // Frontend dev server
+        .allow_origin(&allowed_origin)
         .allow_methods(vec![
             Method::GET,
             Method::POST,
