@@ -1,9 +1,13 @@
 import axios, { type AxiosResponse } from 'axios';
-import type { components, operations } from '../types/api';
 
-export type User = components['schemas']['backend.User'];
+// User type definition
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
-export type UserListResponse = operations['backend.get_users']['responses'][200]['content']['application/json'];
+export type UserListResponse = User[];
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
@@ -34,7 +38,7 @@ export class ApiService {
    */
   static async checkHealth(): Promise<boolean> {
     try {
-      await apiClient.get('/api/users');
+      await apiClient.get('/api/health');
       return true;
     } catch (error) {
       console.error('Health check failed:', error);
