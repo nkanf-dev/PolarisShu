@@ -34,7 +34,7 @@ export class ApiService {
    */
   static async checkHealth(): Promise<boolean> {
     try {
-      await apiClient.get('/api/users');
+      await apiClient.get('/api/health');
       return true;
     } catch (error) {
       console.error('Health check failed:', error);
