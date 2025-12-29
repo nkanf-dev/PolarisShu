@@ -1,10 +1,10 @@
 use salvo::cors::{Cors, CorsHandler};
-use salvo::logging::Logger;
+use salvo::http::Method;
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tracing::info;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 // ============================================================================
 // Models
@@ -43,7 +43,7 @@ pub struct HealthResponse {
 #[endpoint]
 async fn get_users() -> Json<Vec<User>> {
     info!("Fetching user list");
-    
+
     // TODO: Replace with actual database query
     let users = vec![
         User {
@@ -57,7 +57,7 @@ async fn get_users() -> Json<Vec<User>> {
             email: "bob@example.com".to_string(),
         },
     ];
-    
+
     Json(users)
 }
 
@@ -84,7 +84,13 @@ async fn health_check() -> Json<HealthResponse> {
 fn create_cors_handler() -> CorsHandler {
     Cors::new()
         .allow_origin("http://localhost:5173") // Frontend dev server
-        .allow_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+        .allow_methods(vec![
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
         .allow_headers(vec!["Content-Type", "Authorization"])
         .max_age(Duration::from_secs(3600))
         .into_handler()
@@ -92,8 +98,8 @@ fn create_cors_handler() -> CorsHandler {
 
 /// Initialize tracing subscriber for logging
 fn init_tracing() {
-    let env_filter = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new("info,backend=debug"));
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info,backend=debug"));
 
     tracing_subscriber::registry()
         .with(env_filter)
@@ -109,7 +115,7 @@ fn init_tracing() {
 async fn main() {
     // Initialize logging
     init_tracing();
-    
+
     info!("Starting PolarisShu backend service...");
 
     // Create API router
@@ -118,12 +124,11 @@ async fn main() {
         .push(Router::with_path("/api/users").get(get_users));
 
     // Create OpenAPI documentation
-    let doc = OpenApi::new("PolarisShu Backend API", env!("CARGO_PKG_VERSION"))
-        .merge_router(&api_router);
+    let doc =
+        OpenApi::new("PolarisShu Backend API", env!("CARGO_PKG_VERSION")).merge_router(&api_router);
 
     // Combine all routes
     let router = Router::new()
-        .hoop(Logger::new()) // Request logging middleware
         .hoop(create_cors_handler()) // CORS middleware
         .push(api_router)
         .push(doc.into_router("/api-docs/openapi.json"))
@@ -131,16 +136,18 @@ async fn main() {
 
     // Start server
     let acceptor = TcpListener::new("127.0.0.1:8080").bind().await;
-    
+
     info!("✅ Server initialized successfully");
-    println!("\n{'=':-^60}", "");
-    println!("🚀 PolarisShu Backend Service");
+    println!();
+    println!("{:=^60}", "");
+    println!("{:^60}", "🚀 PolarisShu Backend Service");
     println!("{:-^60}", "");
     println!("📍 Server:      http://127.0.0.1:8080");
     println!("💚 Health:      http://127.0.0.1:8080/api/health");
     println!("📚 Swagger UI:  http://127.0.0.1:8080/swagger-ui");
     println!("📄 OpenAPI:     http://127.0.0.1:8080/api-docs/openapi.json");
-    println!("{:'='^60}\n", "");
-    
+    println!("{:=^60}", "");
+    println!();
+
     Server::new(acceptor).serve(router).await;
 }
