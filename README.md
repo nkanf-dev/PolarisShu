@@ -39,6 +39,8 @@ PolarisShu/
 └── package.json       # 根项目配置
 ```
 
+📖 查看详细架构文档: [ARCHITECTURE.md](ARCHITECTURE.md)
+
 ## 🚀 快速开始
 
 ### 环境要求
@@ -219,6 +221,10 @@ cd frontend && bun install
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+
+## 📝 更新日志
+
+查看 [CHANGELOG.md](CHANGELOG.md) 了解项目的详细更新历史。
 
 ## 🙏 致谢
 
